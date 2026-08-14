@@ -7,34 +7,30 @@ const Listing = require("../models/listing.js");
 
 module.exports.index = async (req, res) => {
   const { q } = req.query;
-  let allListing;
+  let allListings;
 
   if (q) {
-    // Exact match pehle — title OR location
     const exactMatch = await Listing.find({
-      $or: [
-        { title: q },
-        { location: q }
-      ]
+      $or: [{ title: q }, { location: q }]
     });
 
-    // Partial matches — regex, case-insensitive
     const partialMatches = await Listing.find({
       $or: [
-        { title: { $regex: q, $options: 'i' } },
-        { location: { $regex: q, $options: 'i' } }
+        { title: { $regex: q, $options: "i" } },
+        { location: { $regex: q, $options: "i" } }
       ],
       title: { $ne: q },
       location: { $ne: q }
     });
 
-    allListing = [...exactMatch, ...partialMatches];
+    allListings = [...exactMatch, ...partialMatches];
   } else {
-    allListing = await Listing.find({});
+    allListings = await Listing.find({});
   }
 
-  res.render("listings/index", { allListing, query: q || "" });
+  res.render("listings/index", { allListings, query: q || "" });
 };
+
     //New Listing creation
 module.exports.renderNewForm = (req, res) => {
     res.render("listings/new");  

@@ -706,7 +706,7 @@
     <% if (query) { %>
         <div class="search-results">
             <h4><i class="fa-solid fa-magnifying-glass"></i> Search results for "<%= query %>"</h4>
-            <% if (allListing.length === 0) { %>
+            <% if (allListings.length === 0) { %>
                 <p class="mt-2">✨ No matching listings found. Try different search terms ✨</p>
             <% } else { %>
                 <p class="mt-1"><%= allListing.length %> amazing stays found</p>
@@ -715,21 +715,22 @@
     <% } %>
     
     <div class="listings-grid" id="listingsGrid">
-        <% for(let listing of allListing) { %>
-            <a href="/listing/<%=listing._id%>" style="text-decoration: none; color: black;" class="listing-card" data-tilt>
-                <div class="card-img-container">
-                    <img src="<%=listing.image.url%>" class="card-img-top" alt="<%= listing.title%>" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title"><%= listing.title%></h5>
-                    <p class="card-price">
-                        <span>₹<%=listing.price%></span> / night
-                        <span class="tax-info">(₹<%= Math.round(listing.price * 0.18) %> taxes)</span>
-                    </p>
-                </div>
-            </a>
-        <% } %>
-    </div>
+    <% for(let listing of allListings) { %>
+        <a href="/listing/<%= listing._id %>" class="listing-card" style="text-decoration: none; color: black;" data-tilt>
+            <div class="card-img-container">
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><%= listing.title %></h5>
+                <p class="card-price">
+                    <span>₹<%= listing.price %></span> / night
+                    <span class="tax-info">(₹<%= Math.round(listing.price * 0.18) %> taxes)</span>
+                </p>
+            </div>
+        </a>
+    <% } %>
+</div>
+
 </body>
 
 <script>
