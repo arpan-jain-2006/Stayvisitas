@@ -1,0 +1,240 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    .profile-container {
+        max-width: 1040px;
+        margin: 2.5rem auto 5rem;
+        padding: 0 1rem;
+    }
+
+    .profile-hero {
+        background: white;
+        border-radius: 28px;
+        border: 1px solid #e5e7eb;
+        padding: 2.5rem;
+        box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #E61E4D, #ff7b90);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.75rem;
+        color: white;
+        font-weight: 800;
+        box-shadow: 0 8px 24px rgba(230, 30, 77, 0.35);
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-email {
+        color: #6b7280;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .profile-stats-grid {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-badge {
+        background: #f9fafb;
+        border: 1px solid #f3f4f6;
+        padding: 1rem 1.75rem;
+        border-radius: 18px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .stat-title {
+        font-size: 0.82rem;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .mini-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .mini-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .mini-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .mini-card-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .mini-card-body {
+        padding: 1.25rem;
+    }
+
+    .mini-card-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #111827;
+        margin-bottom: 0.3rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mini-card-sub {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-hero">
+        <div class="d-flex align-items-center gap-4 flex-wrap">
+            <div class="profile-avatar">
+                <%= (user && user.username) ? user.username.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <div>
+                <h1 class="profile-name"><%= user ? user.username : 'User' %></h1>
+                <div class="profile-email">
+                    <i class="fa-regular fa-envelope"></i> <%= user ? user.email : 'No email provided' %>
+                    <span class="badge bg-success-subtle text-success ms-2">Verified Member</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-stats-grid">
+            <div class="stat-badge">
+                <div class="stat-number"><%= bookings ? bookings.length : 0 %></div>
+                <div class="stat-title">Trips Booked</div>
+            </div>
+            <div class="stat-badge">
+                <div class="stat-number"><%= listings ? listings.length : 0 %></div>
+                <div class="stat-title">Hosted Stays</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Section -->
+    <div>
+        <div class="section-title">
+            <span><i class="fa-solid fa-suitcase-rolling text-danger me-2"></i> Recent Bookings</span>
+            <a href="/my-bookings" class="btn btn-outline-dark btn-sm rounded-pill px-3">View All Trips</a>
+        </div>
+
+        <% if (bookings && bookings.length > 0) { %>
+            <div class="mini-card-grid">
+                <% for (let b of bookings.slice(0, 3)) { %>
+                    <a href="/bookings/<%= b._id %>" class="mini-card">
+                        <img 
+                            src="<%= (b.listing && b.listing.image && b.listing.image.url) ? b.listing.image.url : 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>" 
+                            alt="<%= b.listing ? b.listing.title : 'Stay' %>" 
+                            class="mini-card-img"
+                        />
+                        <div class="mini-card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge <%= b.status === 'Cancelled' ? 'bg-danger' : 'bg-success' %>">
+                                    <%= b.status %>
+                                </span>
+                                <small class="text-muted"><%= b.totalNights %> <%= b.totalNights === 1 ? 'night' : 'nights' %></small>
+                            </div>
+                            <div class="mini-card-title"><%= b.listing ? b.listing.title : 'Stay' %></div>
+                            <div class="mini-card-sub">
+                                ₹<%= b.totalPrice.toLocaleString("en-IN") %> · <%= new Date(b.checkIn).toLocaleDateString() %>
+                            </div>
+                        </div>
+                    </a>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="p-4 bg-light rounded-4 text-center mb-4 border">
+                <p class="text-muted mb-2">No trips booked yet.</p>
+                <a href="/listing" class="btn btn-danger btn-sm rounded-pill px-3">Explore Destinations</a>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- My Listings Section -->
+    <div class="mt-4">
+        <div class="section-title">
+            <span><i class="fa-solid fa-house-chimney text-danger me-2"></i> My Hosted Listings</span>
+            <a href="/listing/new" class="btn btn-danger btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-plus me-1"></i> Add New Stay
+            </a>
+        </div>
+
+        <% if (listings && listings.length > 0) { %>
+            <div class="mini-card-grid">
+                <% for (let l of listings) { %>
+                    <a href="/listing/<%= l._id %>" class="mini-card">
+                        <img 
+                            src="<%= (l.image && l.image.url) ? l.image.url : 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>" 
+                            alt="<%= l.title %>" 
+                            class="mini-card-img"
+                        />
+                        <div class="mini-card-body">
+                            <div class="mini-card-title"><%= l.title %></div>
+                            <div class="mini-card-sub">
+                                <i class="fa-solid fa-location-dot text-danger me-1"></i><%= l.location %>, <%= l.country %>
+                            </div>
+                            <div class="mt-2 fw-bold text-dark">₹<%= l.price.toLocaleString("en-IN") %> / night</div>
+                        </div>
+                    </a>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="p-4 bg-light rounded-4 text-center mb-4 border">
+                <p class="text-muted mb-2">You haven't listed any properties yet.</p>
+                <a href="/listing/new" class="btn btn-outline-danger btn-sm rounded-pill px-3">Become a Host</a>
+            </div>
+        <% } %>
+    </div>
+</div>

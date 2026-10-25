@@ -1,0 +1,255 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    .wishlist-container {
+        max-width: 1200px;
+        margin: 2.5rem auto 5rem;
+        padding: 0 1rem;
+    }
+
+    .wishlist-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .wishlist-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #111827, #E61E4D);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+
+    .wishlist-subtitle {
+        color: #6b7280;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 2rem;
+    }
+
+    .wishlist-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .wishlist-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        border-color: #d1d5db;
+    }
+
+    .wishlist-card-img-wrap {
+        height: 220px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wishlist-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .wishlist-card:hover .wishlist-card-img {
+        transform: scale(1.05);
+    }
+
+    .wishlist-remove-btn {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        color: #E61E4D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 10;
+    }
+
+    .wishlist-remove-btn:hover {
+        transform: scale(1.15);
+        background: #fff1f2;
+    }
+
+    .wishlist-card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+    }
+
+    .wishlist-card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.3rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .wishlist-card-location {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .wishlist-card-price {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #E61E4D;
+    }
+
+    .wishlist-card-price span {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: normal;
+    }
+
+    /* Empty state */
+    .wishlist-empty {
+        background: white;
+        border-radius: 28px;
+        border: 2px dashed #e5e7eb;
+        padding: 5rem 2rem;
+        text-align: center;
+        margin: 2rem 0;
+        display: none;
+    }
+
+    .wishlist-empty-icon {
+        font-size: 4rem;
+        color: #f43f5e;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="wishlist-container">
+    <div class="wishlist-header">
+        <div>
+            <h1 class="wishlist-title">My Saved Wishlist</h1>
+            <p class="wishlist-subtitle">Collect and organize your favorite villas, cabins, and dream stays.</p>
+        </div>
+        <a href="/listing" class="btn btn-outline-dark rounded-pill px-4 fw-semibold">
+            <i class="fa-regular fa-compass me-1"></i> Explore More Stays
+        </a>
+    </div>
+
+    <!-- Listings Grid -->
+    <div class="wishlist-grid" id="wishlistGrid">
+        <% for (let listing of allListings) { %>
+            <div class="wishlist-card-item" id="wishItem_<%= listing._id %>" style="display: none;" data-id="<%= listing._id %>">
+                <div class="wishlist-card">
+                    <button class="wishlist-remove-btn" onclick="removeWishlistItem('<%= listing._id %>')" title="Remove from wishlist">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <a href="/listing/<%= listing._id %>" class="text-decoration-none text-dark">
+                        <div class="wishlist-card-img-wrap">
+                            <img 
+                                src="<%= (listing.image && listing.image.url) ? listing.image.url : 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>" 
+                                alt="<%= listing.title %>" 
+                                class="wishlist-card-img" 
+                            />
+                        </div>
+                        <div class="wishlist-card-body">
+                            <div>
+                                <h5 class="wishlist-card-title"><%= listing.title %></h5>
+                                <div class="wishlist-card-location">
+                                    <i class="fa-solid fa-location-dot text-danger me-1"></i><%= listing.location %>, <%= listing.country %>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-baseline mt-2">
+                                <div class="wishlist-card-price">
+                                    ₹<%= listing.price.toLocaleString("en-IN") %> <span>/ night</span>
+                                </div>
+                                <span class="badge bg-light text-dark border">
+                                    ★ 4.98
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Empty State -->
+    <div class="wishlist-empty" id="wishlistEmpty">
+        <div class="wishlist-empty-icon">
+            <i class="fa-regular fa-heart"></i>
+        </div>
+        <h3 class="fw-bold mb-2">Your wishlist is empty</h3>
+        <p class="text-muted mb-4">Click the heart icon on any stay to save it here for quick access later.</p>
+        <a href="/listing" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold">
+            <i class="fa-regular fa-compass me-1"></i> Start Exploring
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedList = JSON.parse(localStorage.getItem('wanderlust_wishlist') || '[]');
+        const items = document.querySelectorAll('.wishlist-card-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const id = item.getAttribute('data-id');
+            if (savedList.includes(id)) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            document.getElementById('wishlistEmpty').style.display = 'block';
+        }
+    });
+
+    function removeWishlistItem(id) {
+        let savedList = JSON.parse(localStorage.getItem('wanderlust_wishlist') || '[]');
+        savedList = savedList.filter(item => item !== id);
+        localStorage.setItem('wanderlust_wishlist', JSON.stringify(savedList));
+
+        const card = document.getElementById('wishItem_' + id);
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
+            card.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                card.remove();
+                if (document.querySelectorAll('.wishlist-card-item[style*="display: block"]').length === 0) {
+                    document.getElementById('wishlistEmpty').style.display = 'block';
+                }
+            }, 300);
+        }
+    }
+</script>

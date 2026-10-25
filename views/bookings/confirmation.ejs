@@ -1,0 +1,534 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    /* ========== CONFIRMATION & RECEIPT STYLING ========== */
+    .receipt-container {
+        max-width: 1040px;
+        margin: 2rem auto 5rem;
+        padding: 0 1rem;
+    }
+
+    /* Success Banner */
+    .success-banner {
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        border: 1px solid #a7f3d0;
+        border-radius: 24px;
+        padding: 2.25rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+    }
+
+    .success-icon-wrap {
+        width: 64px;
+        height: 64px;
+        background: #10b981;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+        flex-shrink: 0;
+    }
+
+    .success-title {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #065f46;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+
+    .success-subtitle {
+        color: #047857;
+        font-size: 1.05rem;
+        margin-bottom: 0;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action-light {
+        background: white;
+        border: 1px solid #d1d5db;
+        color: #374151;
+        padding: 0.6rem 1.25rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-action-light:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+        color: #111827;
+    }
+
+    .btn-action-dark {
+        background: #111827;
+        color: white !important;
+        border: none;
+        padding: 0.6rem 1.4rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-action-dark:hover {
+        background: #000;
+        transform: translateY(-1px);
+    }
+
+    /* Ticket Grid */
+    .ticket-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1.1fr;
+        gap: 2rem;
+    }
+
+    .ticket-card {
+        background: white;
+        border-radius: 24px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        margin-bottom: 1.75rem;
+    }
+
+    /* Listing Header inside ticket */
+    .listing-preview-card {
+        display: flex;
+        gap: 1.25rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .listing-preview-thumb {
+        width: 120px;
+        height: 100px;
+        border-radius: 16px;
+        object-fit: cover;
+    }
+
+    .listing-preview-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.25rem;
+        text-decoration: none;
+    }
+
+    .listing-preview-location {
+        color: #6b7280;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Itinerary times */
+    .itinerary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        background: #f9fafb;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .itinerary-box h4 {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #9ca3af;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.35rem;
+    }
+
+    .itinerary-date {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.15rem;
+    }
+
+    .itinerary-time {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* Detail lists */
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.85rem 0;
+        border-bottom: 1px dashed #e5e7eb;
+        font-size: 0.95rem;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #6b7280;
+    }
+
+    .detail-val {
+        font-weight: 600;
+        color: #111827;
+        text-align: right;
+    }
+
+    /* Price breakdown receipt */
+    .price-receipt-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 6rem;
+    }
+
+    .receipt-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #111827;
+        margin-bottom: 1.25rem;
+    }
+
+    .receipt-logo {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #E61E4D;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .receipt-ref-code {
+        font-family: monospace;
+        font-size: 0.95rem;
+        font-weight: 700;
+        background: #f3f4f6;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+    }
+
+    .price-calc-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: #4b5563;
+    }
+
+    .price-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        border-top: 2px dashed #e5e7eb;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .qr-box {
+        text-align: center;
+        margin-top: 1.75rem;
+        padding: 1.25rem;
+        background: #f9fafb;
+        border-radius: 16px;
+        border: 1px solid #f3f4f6;
+    }
+
+    .qr-placeholder {
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 0.75rem;
+        background: white;
+        padding: 8px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: #111827;
+    }
+
+    /* Print styles */
+    @media print {
+        body {
+            background: white !important;
+        }
+        nav, footer, .top-actions, .btn-action-light, .btn-action-dark {
+            display: none !important;
+        }
+        .receipt-container {
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+        }
+        .ticket-grid {
+            display: block;
+        }
+        .price-receipt-card {
+            position: static;
+            margin-top: 2rem;
+            page-break-inside: avoid;
+        }
+    }
+
+    @media (max-width: 860px) {
+        .ticket-grid {
+            grid-template-columns: 1fr;
+        }
+        .price-receipt-card {
+            position: static;
+        }
+    }
+</style>
+
+<div class="receipt-container">
+    <!-- Success Banner -->
+    <div class="success-banner">
+        <div class="d-flex align-items-center gap-3">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <h1 class="success-title">
+                    <%= booking.status === 'Cancelled' ? 'Reservation Cancelled' : 'Reservation Confirmed!' %>
+                </h1>
+                <p class="success-subtitle">
+                    <%= booking.status === 'Cancelled' 
+                        ? 'This booking was cancelled and dates have been released.' 
+                        : "You're all set! A confirmation has been booked under your name." %>
+                </p>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <button class="btn-action-light" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print Receipt
+            </button>
+            <a href="/my-bookings" class="btn-action-dark">
+                <i class="fa-solid fa-suitcase-rolling"></i> View My Trips
+            </a>
+        </div>
+    </div>
+
+    <!-- Ticket Grid -->
+    <div class="ticket-grid">
+        <!-- Left: Stay Details -->
+        <div>
+            <div class="ticket-card">
+                <!-- Listing Header -->
+                <% if (booking.listing) { %>
+                    <div class="listing-preview-card">
+                        <img 
+                            src="<%= (booking.listing.image && booking.listing.image.url) ? booking.listing.image.url : 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>" 
+                            alt="<%= booking.listing.title %>" 
+                            class="listing-preview-thumb"
+                        />
+                        <div>
+                            <a href="/listing/<%= booking.listing._id %>" class="listing-preview-title">
+                                <%= booking.listing.title %>
+                            </a>
+                            <div class="listing-preview-location">
+                                <i class="fa-solid fa-location-dot" style="color: #E61E4D;"></i>
+                                <%= booking.listing.location %>, <%= booking.listing.country %>
+                            </div>
+                            <span class="badge bg-light text-dark border">
+                                <i class="fa-solid fa-user-shield text-success me-1"></i>
+                                Hosted by <%= booking.listing.owner ? booking.listing.owner.username : 'Superhost' %>
+                            </span>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Itinerary Times -->
+                <div class="itinerary-grid">
+                    <div class="itinerary-box">
+                        <h4>Check-in</h4>
+                        <div class="itinerary-date">
+                            <%= new Date(booking.checkIn).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) %>
+                        </div>
+                        <div class="itinerary-time">After 2:00 PM (Keyless access)</div>
+                    </div>
+                    <div class="itinerary-box">
+                        <h4>Check-out</h4>
+                        <div class="itinerary-date">
+                            <%= new Date(booking.checkOut).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) %>
+                        </div>
+                        <div class="itinerary-time">Before 11:00 AM</div>
+                    </div>
+                </div>
+
+                <!-- Guest & Booking Info -->
+                <h4 class="fw-bold mb-3" style="color: #111827; font-size: 1.15rem;">Reservation Details</h4>
+                <div class="detail-row">
+                    <span class="detail-label">Confirmation Code</span>
+                    <span class="detail-val font-monospace"><%= booking.bookingReference %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Primary Guest</span>
+                    <span class="detail-val"><%= booking.guestName || (booking.user ? booking.user.username : 'Guest') %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Contact Email</span>
+                    <span class="detail-val"><%= booking.guestEmail || (booking.user ? booking.user.email : 'N/A') %></span>
+                </div>
+                <% if (booking.guestPhone) { %>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone Number</span>
+                        <span class="detail-val"><%= booking.guestPhone %></span>
+                    </div>
+                <% } %>
+                <div class="detail-row">
+                    <span class="detail-label">Guests</span>
+                    <span class="detail-val">
+                        <%= booking.guests ? booking.guests.adults : 1 %> Adults
+                        <% if (booking.guests && booking.guests.children > 0) { %>, <%= booking.guests.children %> Children<% } %>
+                        <% if (booking.guests && booking.guests.infants > 0) { %>, <%= booking.guests.infants %> Infants<% } %>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Duration</span>
+                    <span class="detail-val"><%= booking.totalNights %> <%= booking.totalNights === 1 ? 'Night' : 'Nights' %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-val">
+                        <%= booking.paymentMethod %>
+                        <span class="badge <%= booking.paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning text-dark' %> ms-1">
+                            <i class="fa-solid <%= booking.paymentStatus === 'Paid' ? 'fa-circle-check' : 'fa-clock' %> me-1"></i>
+                            <%= booking.paymentStatus %>
+                        </span>
+                    </span>
+                </div>
+                <% if (booking.razorpayPaymentId) { %>
+                    <div class="detail-row">
+                        <span class="detail-label">Razorpay Transaction ID</span>
+                        <span class="detail-val font-monospace text-primary">
+                            <i class="fa-solid fa-receipt me-1"></i><%= booking.razorpayPaymentId %>
+                        </span>
+                    </div>
+                <% } %>
+                <% if (booking.specialRequests) { %>
+                    <div class="detail-row">
+                        <span class="detail-label">Special Requests</span>
+                        <span class="detail-val text-muted fst-italic">"<%= booking.specialRequests %>"</span>
+                    </div>
+                <% } %>
+
+            </div>
+
+            <!-- Things to know card -->
+            <div class="ticket-card">
+                <h4 class="fw-bold mb-3" style="color: #111827; font-size: 1.15rem;">
+                    <i class="fa-solid fa-shield-halved text-primary me-2"></i> Things to Know
+                </h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="fw-bold mb-1"><i class="fa-solid fa-door-open me-2 text-danger"></i> House Rules</h6>
+                            <ul class="text-muted small ps-3 mb-0">
+                                <li>Check-in: 2:00 PM – 10:00 PM</li>
+                                <li>No smoking indoors</li>
+                                <li>Quiet hours after 10:00 PM</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="fw-bold mb-1"><i class="fa-solid fa-arrow-rotate-left me-2 text-success"></i> Cancellation Policy</h6>
+                            <p class="text-muted small mb-0">
+                                Free cancellation up to 48 hours before check-in. Cancel anytime from your trips tab.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Official Receipt -->
+        <div>
+            <div class="price-receipt-card">
+                <div class="receipt-header">
+                    <div class="receipt-logo">
+                        <i class="fa-regular fa-compass"></i> stayvista
+                    </div>
+                    <div class="receipt-ref-code">
+                        <%= booking.bookingReference %>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3" style="font-size: 1.1rem;">Price Breakdown</h5>
+
+                <div class="price-calc-item">
+                    <span>₹<%= booking.nightlyPrice.toLocaleString("en-IN") %> × <%= booking.totalNights %> <%= booking.totalNights === 1 ? 'night' : 'nights' %></span>
+                    <span class="fw-semibold">₹<%= booking.basePrice.toLocaleString("en-IN") %></span>
+                </div>
+
+                <div class="price-calc-item">
+                    <span>Cleaning fee</span>
+                    <span class="fw-semibold">₹<%= booking.cleaningFee.toLocaleString("en-IN") %></span>
+                </div>
+
+                <div class="price-calc-item">
+                    <span>Stayvista service fee (7%)</span>
+                    <span class="fw-semibold">₹<%= booking.serviceFee.toLocaleString("en-IN") %></span>
+                </div>
+
+                <div class="price-calc-item">
+                    <span>Taxes & GST (18%)</span>
+                    <span class="fw-semibold">₹<%= booking.taxes.toLocaleString("en-IN") %></span>
+                </div>
+
+                <div class="price-total-row">
+                    <span>Total <%= booking.paymentStatus === 'Paid' ? 'Paid' : 'Due' %></span>
+                    <span style="color: #E61E4D;">₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+                </div>
+
+                <!-- QR Check-in badge -->
+                <div class="qr-box">
+                    <div class="qr-placeholder">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <div class="fw-bold small text-dark">Fast Pass Check-in QR</div>
+                    <small class="text-muted">Present this confirmation or QR code to host upon arrival</small>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <small class="text-muted">
+                        <i class="fa-solid fa-lock text-success me-1"></i> Guaranteed with Stayvista Protection
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

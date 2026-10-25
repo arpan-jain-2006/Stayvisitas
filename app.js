@@ -23,6 +23,7 @@ const Listing = require("./models/listing.js");
 const listingRoutes = require("./routes/listings.js");
 const reviewRoutes = require("./routes/review.js");
 const userRoutes = require("./routes/user.js");
+const bookingRoutes = require("./routes/booking.js");
 
 // -------------------- 🔗 MongoDB Connection --------------------
 const dbUrl = process.env.ATLASDB_URL;
@@ -40,9 +41,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // -------------------- ⚙️ Global Middleware --------------------
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+
 
 // -------------------- 🗄️ Session Store --------------------
 const store = MongoStore.create({
@@ -91,6 +94,7 @@ app.use((req, res, next) => {
 app.use("/listing", listingRoutes);
 app.use("/listing/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
+app.use("/", bookingRoutes);
 
 // -------------------- 🛣️ Root Route --------------------
 app.get("/", async (req, res) => {

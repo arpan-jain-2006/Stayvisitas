@@ -430,7 +430,17 @@
                 </form>
             </div>
 
-            <div class="navbar-nav ms-auto">
+            <div class="navbar-nav ms-auto align-items-center">
+                <a class="nav-link special-link me-1" href="/wishlist">
+                    <i class="fa-solid fa-heart" style="color: #E61E4D;"></i> Wishlist
+                </a>
+
+                <% if(currUser){ %>
+                    <a class="nav-link special-link me-1" href="/my-bookings">
+                        <i class="fa-solid fa-suitcase-rolling"></i> My Trips
+                    </a>
+                <% } %>
+
                 <a class="nav-link special-link" href="/listing/new">
                     <i class="fa-regular fa-calendar-plus"></i> Airbnb Your Home
                 </a>
@@ -449,18 +459,29 @@
                         <a class="nav-link dropdown-toggle auth-btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-regular fa-circle-user"></i> <%= currUser.username || 'Account' %>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile">
-                                <i class="fa-regular fa-user me-2"></i> Profile
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="border-radius: 16px; border: 1px solid #e5e7eb; padding: 0.5rem;">
+                            <li><a class="dropdown-item py-2 fw-semibold" href="/my-bookings">
+                                <i class="fa-solid fa-suitcase-rolling me-2 text-danger"></i> My Trips & Bookings
                             </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item logout-btn" href="/logout">
+                            <li><a class="dropdown-item py-2 fw-semibold" href="/wishlist">
+                                <i class="fa-solid fa-heart me-2 text-danger"></i> Saved Wishlist
+                            </a></li>
+                            <li><a class="dropdown-item py-2 fw-semibold" href="/profile">
+                                <i class="fa-regular fa-user me-2 text-primary"></i> Profile & Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item py-2 fw-semibold" href="/listing/new">
+                                <i class="fa-solid fa-house-chimney me-2 text-warning"></i> Host a Stay
+                            </a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><a class="dropdown-item py-2 text-danger logout-btn fw-semibold" href="/logout">
                                 <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
                             </a></li>
                         </ul>
                     </div>
                 <% } %>
             </div>
+
+
         </div>
     </div>
 </nav>

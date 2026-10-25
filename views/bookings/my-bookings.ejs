@@ -1,0 +1,604 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    /* ========== MY BOOKINGS / TRIPS STYLING ========== */
+    .trips-container {
+        max-width: 1140px;
+        margin: 2.5rem auto 4rem;
+        padding: 0 1rem;
+    }
+
+    .trips-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .trips-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #111827, #E61E4D);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+
+    .trips-subtitle {
+        color: #6b7280;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .explore-btn {
+        background: linear-gradient(135deg, #E61E4D, #ff385c);
+        color: white !important;
+        padding: 0.75rem 1.6rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 14px rgba(230, 30, 77, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .explore-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(230, 30, 77, 0.4);
+    }
+
+    /* Filter pills */
+    .trips-filters {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 1rem;
+    }
+
+    .filter-pill {
+        border: none;
+        background: #f3f4f6;
+        color: #4b5563;
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .filter-pill.active {
+        background: #111827;
+        color: white;
+    }
+
+    /* Booking Card */
+    .booking-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        display: grid;
+        grid-template-columns: 280px 1fr;
+    }
+
+    .booking-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        border-color: #d1d5db;
+    }
+
+    .booking-card.status-cancelled {
+        opacity: 0.75;
+        background: #fafafa;
+    }
+
+    .booking-image-wrapper {
+        position: relative;
+        height: 100%;
+        min-height: 220px;
+    }
+
+    .booking-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .booking-status-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        backdrop-filter: blur(8px);
+    }
+
+    .status-confirmed-badge {
+        background: rgba(16, 185, 129, 0.92);
+        color: white;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-cancelled-badge {
+        background: rgba(239, 68, 68, 0.92);
+        color: white;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .booking-content {
+        padding: 1.5rem 1.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .booking-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .booking-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.3rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: color 0.2s;
+    }
+
+    .booking-title:hover {
+        color: #E61E4D;
+    }
+
+    .booking-location {
+        color: #6b7280;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .booking-reference {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.3rem 0.75rem;
+        border-radius: 8px;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    /* Meta grid */
+    .booking-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin: 1.25rem 0;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 14px;
+        border: 1px solid #f3f4f6;
+    }
+
+    .meta-item-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #9ca3af;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+
+    .meta-item-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    /* Bottom actions */
+    .booking-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #f3f4f6;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .booking-total-price {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .booking-total-price span {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .booking-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-receipt {
+        background: #111827;
+        color: white !important;
+        padding: 0.55rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s;
+    }
+
+    .btn-receipt:hover {
+        background: #000;
+        transform: translateY(-1px);
+    }
+
+    .btn-cancel-modal {
+        background: transparent;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        padding: 0.55rem 1.1rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel-modal:hover {
+        background: #fee2e2;
+        border-color: #ef4444;
+    }
+
+    /* Modal Anti-Flicker & Stacking Fixes */
+    #cancelReservationModal {
+        z-index: 1060 !important;
+        background-color: rgba(0, 0, 0, 0.55);
+    }
+
+    #cancelReservationModal.modal.modal-static .modal-dialog {
+        transform: none !important;
+        animation: none !important;
+    }
+
+    #cancelReservationModal .modal-dialog {
+        max-width: 480px;
+        margin: 1.75rem auto;
+        transform: none !important;
+    }
+
+    #cancelReservationModal .modal-content {
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Empty State */
+    .empty-trips-card {
+        background: white;
+        border-radius: 28px;
+        border: 2px dashed #e5e7eb;
+        padding: 5rem 2rem;
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .empty-trips-icon {
+        font-size: 4rem;
+        background: linear-gradient(135deg, #E61E4D, #ff7b90);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-trips-card h3 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-trips-card p {
+        color: #6b7280;
+        max-width: 480px;
+        margin: 0 auto 2rem;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+        .booking-card {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-image-wrapper {
+            height: 200px;
+        }
+    }
+</style>
+
+<div class="trips-container">
+    <div class="trips-header">
+        <div>
+            <h1 class="trips-title">My Trips & Stays</h1>
+            <p class="trips-subtitle">Manage your booked reservations, view receipts, and plan your travels.</p>
+        </div>
+        <a href="/listing" class="explore-btn">
+            <i class="fa-solid fa-compass"></i> Explore Stays
+        </a>
+    </div>
+
+    <% if (bookings && bookings.length > 0) { %>
+        <!-- Filter Tabs -->
+        <div class="trips-filters">
+            <button class="filter-pill active" onclick="filterTrips('all')">All Trips (<%= bookings.length %>)</button>
+            <button class="filter-pill" onclick="filterTrips('confirmed')">
+                Confirmed (<%= bookings.filter(b => b.status === 'Confirmed').length %>)
+            </button>
+            <button class="filter-pill" onclick="filterTrips('cancelled')">
+                Cancelled (<%= bookings.filter(b => b.status === 'Cancelled').length %>)
+            </button>
+        </div>
+
+        <div class="trips-list">
+            <% for (let booking of bookings) { %>
+                <% const isCancelled = booking.status === 'Cancelled'; %>
+                <div class="booking-card <%= isCancelled ? 'status-cancelled' : '' %>" data-status="<%= booking.status.toLowerCase() %>">
+                    <div class="booking-image-wrapper">
+                        <img 
+                            src="<%= (booking.listing && booking.listing.image && booking.listing.image.url) ? booking.listing.image.url : 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>" 
+                            alt="<%= booking.listing ? booking.listing.title : 'Listing' %>" 
+                            class="booking-image"
+                        />
+                        <div class="booking-status-badge <%= isCancelled ? 'status-cancelled-badge' : 'status-confirmed-badge' %>">
+                            <i class="fa-solid <%= isCancelled ? 'fa-circle-xmark' : 'fa-circle-check' %>"></i>
+                            <%= booking.status %>
+                        </div>
+                    </div>
+
+                    <div class="booking-content">
+                        <div>
+                            <div class="booking-top">
+                                <div>
+                                    <% if (booking.listing) { %>
+                                        <a href="/listing/<%= booking.listing._id %>" class="booking-title">
+                                             <%= booking.listing.title %>
+                                        </a>
+                                        <div class="booking-location">
+                                            <i class="fa-solid fa-location-dot" style="color: #E61E4D;"></i>
+                                            <%= booking.listing.location %>, <%= booking.listing.country %>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="booking-title">Stay (Listing Removed)</span>
+                                    <% } %>
+                                </div>
+                                <div class="booking-reference" title="Booking Reference Code">
+                                    <%= booking.bookingReference %>
+                                </div>
+                            </div>
+
+                            <div class="booking-meta-grid">
+                                <div>
+                                    <div class="meta-item-label">Check-in</div>
+                                    <div class="meta-item-value">
+                                        <i class="fa-regular fa-calendar-check text-muted"></i>
+                                        <%= new Date(booking.checkIn).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="meta-item-label">Check-out</div>
+                                    <div class="meta-item-value">
+                                        <i class="fa-regular fa-calendar-xmark text-muted"></i>
+                                        <%= new Date(booking.checkOut).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="meta-item-label">Duration</div>
+                                    <div class="meta-item-value">
+                                        <i class="fa-solid fa-moon text-muted"></i>
+                                        <%= booking.totalNights %> <%= booking.totalNights === 1 ? 'night' : 'nights' %>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="meta-item-label">Guests</div>
+                                    <div class="meta-item-value">
+                                        <i class="fa-solid fa-user-group text-muted"></i>
+                                        <%= booking.totalGuests %> <%= booking.totalGuests === 1 ? 'guest' : 'guests' %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="booking-bottom">
+                            <div>
+                                <div class="booking-total-price">
+                                    ₹<%= booking.totalPrice.toLocaleString("en-IN") %>
+                                    <span>total (<%= booking.paymentStatus %>)</span>
+                                </div>
+                            </div>
+
+                            <div class="booking-actions">
+                                <a href="/bookings/<%= booking._id %>" class="btn-receipt">
+                                    <i class="fa-regular fa-file-lines"></i> View Ticket & Receipt
+                                </a>
+
+                                <% if (booking.listing) { %>
+                                    <a href="/listing/<%= booking.listing._id %>" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px; font-weight: 600;">
+                                        View Listing
+                                    </a>
+                                <% } %>
+
+                                <% if (booking.status === 'Confirmed') { %>
+                                    <button 
+                                        type="button" 
+                                        class="btn-cancel-modal" 
+                                        onclick="openCancelModal(event, '<%= booking._id %>', '<%= (booking.listing ? booking.listing.title : 'Stay').replace(/'/g, "\\'") %>', '<%= booking.bookingReference %>', '<%= new Date(booking.checkIn).toLocaleDateString() %> to <%= new Date(booking.checkOut).toLocaleDateString() %>', '₹<%= booking.totalPrice.toLocaleString("en-IN") %>')"
+                                    >
+                                        <i class="fa-regular fa-circle-xmark"></i> Cancel
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    <% } else { %>
+        <!-- Empty State -->
+        <div class="empty-trips-card">
+            <div class="empty-trips-icon">
+                <i class="fa-solid fa-suitcase-rolling"></i>
+            </div>
+            <h3>No trips booked... yet!</h3>
+            <p>Time to dust off your bags and start planning your next great adventure. Discover vacation homes, villas, cabins, and beachfront retreats.</p>
+            <a href="/listing" class="explore-btn" style="padding: 0.9rem 2.2rem; font-size: 1.05rem;">
+                <i class="fa-solid fa-compass"></i> Start Exploring Stays
+            </a>
+        </div>
+    <% } %>
+</div>
+
+<!-- Master Cancellation Modal -->
+<div class="modal fade" id="cancelReservationModal" tabindex="-1" aria-labelledby="cancelModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #fff5f5; border-bottom: 1px solid #fee2e2; padding: 1.25rem 1.75rem;">
+                <h5 class="modal-title text-danger fw-bold d-flex align-items-center gap-2" id="cancelModalTitle">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Cancel Reservation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="mb-3 fs-6">Are you sure you want to cancel your reservation for <b id="cancelModalStayTitle">this stay</b>?</p>
+                <div class="p-3 bg-light rounded-4 mb-3 border">
+                    <small class="text-muted d-block mb-1">Booking Reference: <b class="text-dark font-monospace" id="cancelModalRefCode"></b></small>
+                    <small class="text-muted d-block mb-1">Dates: <span class="fw-semibold text-dark" id="cancelModalDates"></span></small>
+                    <small class="text-muted d-block">Refund Amount: <b class="text-success" id="cancelModalRefundAmount"></b> (Free Cancellation)</small>
+                </div>
+                <p class="text-muted small mb-0">Once cancelled, your dates will be released and made available for other guests.</p>
+            </div>
+            <div class="modal-footer bg-white p-3 border-top d-flex justify-content-between">
+                <button type="button" class="btn btn-light px-4 rounded-pill fw-semibold" data-bs-dismiss="modal">Keep Reservation</button>
+                <form id="cancelModalForm" method="POST" action="" style="display: inline;">
+                    <button type="submit" class="btn btn-danger px-4 rounded-pill fw-semibold" id="confirmCancelSubmitBtn">
+                        <i class="fa-solid fa-circle-xmark me-1"></i> Yes, Cancel Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTrips(type) {
+        document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+
+        const cards = document.querySelectorAll('.booking-card');
+        cards.forEach(card => {
+            const status = card.getAttribute('data-status');
+            if (type === 'all' || status === type) {
+                card.style.display = 'grid';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Move modal to body on load to prevent any stacking context / container flickering
+    function attachModalToBody() {
+        const modalElement = document.getElementById('cancelReservationModal');
+        if (modalElement && modalElement.parentElement !== document.body) {
+            document.body.appendChild(modalElement);
+        }
+    }
+    attachModalToBody();
+    document.addEventListener("DOMContentLoaded", attachModalToBody);
+
+    function openCancelModal(e, bookingId, title, refCode, dates, amount) {
+        if (e) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        }
+
+        // Unfocus active element to avoid focus trap/hover loop conflict
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+
+        const modalElement = document.getElementById('cancelReservationModal');
+        if (!modalElement) return;
+
+        // Ensure it is a direct child of body
+        if (modalElement.parentElement !== document.body) {
+            document.body.appendChild(modalElement);
+        }
+
+        document.getElementById('cancelModalStayTitle').textContent = title;
+        document.getElementById('cancelModalRefCode').textContent = refCode;
+        document.getElementById('cancelModalDates').textContent = dates;
+        document.getElementById('cancelModalRefundAmount').textContent = amount;
+        document.getElementById('cancelModalForm').action = '/bookings/' + bookingId + '/cancel';
+
+        // Clean Bootstrap modal instantiation without static backdrop flickering
+        let modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true
+            });
+        }
+        modalInstance.show();
+    }
+
+    // Prevent double submissions
+    document.addEventListener("DOMContentLoaded", function() {
+        const cancelForm = document.getElementById('cancelModalForm');
+        if (cancelForm) {
+            cancelForm.addEventListener('submit', function() {
+                const btn = document.getElementById('confirmCancelSubmitBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Cancelling...';
+                }
+            });
+        }
+    });
+</script>
+

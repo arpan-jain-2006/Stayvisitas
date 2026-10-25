@@ -88,8 +88,7 @@ module.exports.showListing = async (req, res) => {
         req.flash("error","Listing required dosen't Exist")
         return res.redirect("/listing")
     }
-    console.log("Owner data:", listing.owner);
-    console.log("Owner ID type:", typeof listing.owner._id);
 
     res.render("listings/show", { listing });
 }
+

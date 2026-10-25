@@ -1,10 +1,12 @@
 const User = require("../models/user.js");
+const Listing = require("../models/listing.js");
+const Booking = require("../models/booking.js");
 
 module.exports.getSignup = async(req,res)=>{
     res.render("users/signup.ejs");
 }
 
-module.exports.postSignup = async(req,res)=>{
+module.exports.postSignup = async(req,res,next)=>{
     try{
     let {username,email,password}= req.body;
     const newUser = new User({username,email});
@@ -43,3 +45,13 @@ module.exports.logout = (req,res,next)=>{
         res.redirect("/listing");
     })
 }
+
+module.exports.getProfile = async (req, res) => {
+    const user = req.user;
+    const listings = await Listing.find({ owner: user._id });
+    const bookings = await Booking.find({ user: user._id })
+        .populate("listing")
+        .sort({ createdAt: -1 });
+
+    res.render("users/profile.ejs", { user, listings, bookings });
+};
